@@ -37,6 +37,16 @@ public class BluetoothDeviceManager extends ObservableBleManager {
 
     private class BluetoothDeviceManagerGattCallback extends BleManagerGattCallback {
         @Override
+        protected void initialize() {
+            // Initialize your device.
+            // This means e.g. enabling notifications, setting notification callbacks,
+            // sometimes writing something to some Control Point.
+            // Kotlin projects should not use suspend methods here, which require a scope.
+            requestMtu(517)
+                    .enqueue();
+        }
+
+        @Override
         protected boolean isRequiredServiceSupported(@NonNull BluetoothGatt gatt) {
             final BluetoothGattService service = gatt.getService(BluetoothUtils.getUuidUart());
             if (service != null) {

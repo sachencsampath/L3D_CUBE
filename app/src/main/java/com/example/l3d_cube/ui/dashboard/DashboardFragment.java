@@ -15,15 +15,16 @@ import androidx.fragment.app.Fragment;
 
 import com.example.l3d_cube.gesture.GestureUtils;
 import com.example.l3d_cube.databinding.FragmentDashboardBinding;
+import com.example.l3d_cube.ui.FragmentDataTransfer;
 
 public class DashboardFragment extends Fragment{
 
     private FragmentDashboardBinding binding;
-
-    private GestureDetectorCompat motionDetector;
     private Context context;
 
-    private float scrollstartX1, scrollStartY1;
+    FragmentDataTransfer fragmentDataTransfer;
+
+    private GestureDetectorCompat motionDetector;
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,25 +49,29 @@ public class DashboardFragment extends Fragment{
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2,
                                float velocityX, float velocityY) {
-            GestureUtils.handleFling(context, velocityX, velocityY);
+            if(GestureUtils.isAboveVThreshold(velocityX, velocityY)) {
+                sendToBluetooth(GestureUtils.handleFling(context, velocityX, velocityY));
+            }
             return super.onFling(event1, event2, velocityX, velocityY);
         }
 
         @Override
         public boolean onScroll(MotionEvent event1, MotionEvent event2,
                                 float distanceX, float distanceY) {
-            GestureUtils.handleScroll(context, event1, distanceX, distanceY);
+            if(GestureUtils.shouldSendScroll()){
+                sendToBluetooth(GestureUtils.handleScroll(context, event1, distanceX, distanceY));
+            }
             return super.onScroll(event1, event2, distanceX, distanceY);
         }
 
         @Override
         public void onLongPress(MotionEvent event){
-            GestureUtils.handleLongPress(context);
+            sendToBluetooth(GestureUtils.handleLongPress(context));
         }
 
         @Override
         public boolean onDoubleTap(MotionEvent event) {
-            GestureUtils.handleDoubleTap(context);
+            sendToBluetooth(GestureUtils.handleDoubleTap(context));
             return super.onDoubleTap(event);
         }
     }
@@ -75,5 +80,15 @@ public class DashboardFragment extends Fragment{
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        fragmentDataTransfer = (FragmentDataTransfer) context;
+    }
+
+    public void sendToBluetooth(byte[] data) {
+        fragmentDataTransfer.fragmentToBluetooth(data);
     }
 }

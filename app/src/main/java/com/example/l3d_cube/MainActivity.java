@@ -35,6 +35,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.l3d_cube.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -210,7 +211,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDataTrans
     @Override
     public void fragmentToBluetooth(String data) {
         if(Boolean.TRUE.equals(bluetoothViewModel.isConnected().getValue())){
-            bluetoothViewModel.writeString(data);
+            bluetoothViewModel.write(data.getBytes());
+        } else {
+            BluetoothUtils.noBluetoothDeviceConnectedToast(this);
+        }
+    }
+
+    @Override
+    public void fragmentToBluetooth(byte[] data) {
+        if(Boolean.TRUE.equals(bluetoothViewModel.isConnected().getValue())){
+            bluetoothViewModel.write(data);
         } else {
             BluetoothUtils.noBluetoothDeviceConnectedToast(this);
         }
