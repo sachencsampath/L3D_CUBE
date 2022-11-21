@@ -57,8 +57,8 @@ public class BluetoothViewModel extends AndroidViewModel {
         bluetoothDeviceManager.setIsDeviceConnected(false);
     }
 
-    public void writeString(String data){
-        bluetoothDeviceManager.write(data.getBytes());
+    public void write(byte[] data){
+        bluetoothDeviceManager.write(data);
     }
 
     public LiveData<Boolean> isConnected() {

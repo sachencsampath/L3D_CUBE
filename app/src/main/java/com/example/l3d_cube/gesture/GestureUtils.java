@@ -10,27 +10,37 @@ import es.dmoral.toasty.Toasty;
 
 public class GestureUtils {
     private static final int vThreshold = 2000;
+    private static int scrollCounter = 0;
+    private static final int scrollLimiter = 4;
 
     private static float scrollstartX1;
     private static float scrollStartY1;
 
-    public static void handleFling(Context context, float velocityX, float velocityY) {
-        if(isAboveVThreshold(velocityX, velocityY)){
-//            String direction = getFlingDirection(velocityX, velocityY);
-//            String msg = "Fling: " + "direction=" + direction + ", x-velocity=" + Math.round(velocityX) + ", y-velocity=" + Math.round(velocityY);
-            int vx = Math.round(velocityX);
-            int vy = Math.round(velocityY);
+    public static byte[] handleFling(Context context, float velocityX, float velocityY) {
+        int vx = Math.round(velocityX);
+        int vy = Math.round(velocityY);
 
-            // send data
-            Fling fling = new Fling(Math.round(velocityX), Math.round(velocityY));
-            byte[] data = fling.toByteArray();
-            String msg = "Fling: " + Arrays.toString(data);
-            Toasty.info(context, msg, Toast.LENGTH_SHORT, true).show();
-        }
+        Fling fling = new Fling(Math.round(velocityX), Math.round(velocityY));
+        byte[] data = fling.toByteArray();
+
+        String msg = "Fling: " + Arrays.toString(data);
+        Toasty.info(context, msg, Toast.LENGTH_SHORT, true).show();
+
+        return data;
     }
 
-    private static boolean isAboveVThreshold(float velocityX, float velocityY){
+    public static boolean isAboveVThreshold(float velocityX, float velocityY){
         return ((Math.abs(velocityX) > vThreshold) || (Math.abs(velocityY) > vThreshold));
+    }
+
+    public static boolean shouldSendScroll(){
+        if(scrollCounter >= scrollLimiter){
+            scrollCounter = 0;
+            return true;
+        } else {
+            scrollCounter++;
+            return false;
+        }
     }
 
 //    private static String getFlingDirection(float velocityX, float velocityY) {
@@ -51,14 +61,19 @@ public class GestureUtils {
 //        return null;
 //    }
 
-    public static void handleScroll(Context context, MotionEvent event1, float distanceX, float distanceY) {
+    public static byte[] handleScroll(Context context, MotionEvent event1, float distanceX, float distanceY) {
+        int dx = Math.round(distanceX);
+        int dy = Math.round(distanceY);
+
+        Scroll scroll = new Scroll(dx, dy);
+        byte[] data = scroll.toByteArray();
+
         if(!isSameScroll(event1)){
             String msg = "Scroll";
             Toasty.info(context, msg, Toast.LENGTH_SHORT, true).show();
         }
 
-        // send data
-
+        return data;
     }
 
     private static boolean isSameScroll(MotionEvent event1) {
@@ -70,19 +85,23 @@ public class GestureUtils {
         return true;
     }
 
-    public static void handleLongPress(Context context) {
+    public static byte[] handleLongPress(Context context) {
         Gesture longPress = new Gesture(Gesture.GestureType.longPress);
-
         byte[] data = longPress.toByteArray();
+
         String msg = "Long-Press: " + Arrays.toString(data);
         Toasty.info(context, msg, Toast.LENGTH_SHORT, true).show();
+
+        return data;
     }
 
-    public static void handleDoubleTap(Context context) {
+    public static byte[] handleDoubleTap(Context context) {
         Gesture doubleTap = new Gesture(Gesture.GestureType.doubleTap);
-
         byte[] data = doubleTap.toByteArray();
+
         String msg = "Double-Tap: " + Arrays.toString(data);
         Toasty.info(context, msg, Toast.LENGTH_SHORT, true).show();
+
+        return data;
     }
 }
