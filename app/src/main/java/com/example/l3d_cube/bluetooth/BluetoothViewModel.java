@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import es.dmoral.toasty.Toasty;
 import no.nordicsemi.android.ble.ConnectRequest;
+import no.nordicsemi.android.ble.PhyRequest;
 
 public class BluetoothViewModel extends AndroidViewModel {
     private final BluetoothDeviceManager bluetoothDeviceManager;
@@ -35,8 +36,8 @@ public class BluetoothViewModel extends AndroidViewModel {
     public void connect(@NonNull final BluetoothDevice target) {
         device = target;
         connectRequest = bluetoothDeviceManager.connect(device)
-                .retry(3, 100)
                 .useAutoConnect(false)
+                .usePreferredPhy(PhyRequest.PHY_LE_2M_MASK)
                 .then(d -> connectRequest = null)
                 .done(d -> {
                     bluetoothDeviceManager.setIsDeviceConnected(true);

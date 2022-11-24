@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDataTrans
 
     // Animation Variables
     private LottieAnimationView animationView;
-    private final int animationDelay = 3300;
-//    private final int animationDelay = 0;
+//    private final int animationDelay = 3300;
+    private final int animationDelay = 0;
 
     // Toolbar
     private AppBarLayout appBarLayout;
@@ -75,15 +75,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDataTrans
         toolbar = binding.toolbar;
         setSupportActionBar(binding.toolbar);
 
-
         BottomNavigationView navView = binding.bottomNavMenu;
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_settings)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
 
         // Configure the view model.
         bluetoothViewModel = new ViewModelProvider(this).get(BluetoothViewModel.class);
